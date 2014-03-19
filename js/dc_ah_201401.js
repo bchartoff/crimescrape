@@ -1,0 +1,1 @@
+{"widx": 11, "wid": "201401", "wstart": "Dec. 30", "offense": "Homicide and assault with dangerous weapon", "total": 0, "markers": []}
