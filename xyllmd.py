@@ -1,9 +1,6 @@
 from math import *
 import csv
 
-csv_in = csv.reader(open("test_data.csv","rU"))
-csv_out = csv.writer(open("test_data_out.csv","wb"))
-
 #----------- start of xy2LL ;
 #DATA _NULL_ ; 
 # xs= 398943
@@ -118,16 +115,6 @@ def xy_to_latlon(xs,ys):
 
     return(lat,lon)
 
-# print xy_to_latlon(398943,133729)
 
-
-# head = csv_in.next()
-# csv_out.writerow(head)
-
-# for row in csv_in:
-#   latlon = xy_to_latlon(float(row[5]),float(row[6]))
-#   row[9] = latlon[1]
-#   row[10] = latlon[0]
-#   csv_out.writerow(row)
 
 
