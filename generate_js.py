@@ -49,6 +49,15 @@ def get_date(date_str):
   month = int(date_list[0])
   day = int(date_list[1])
   year = int(date_list[2])
+  #if csv formatting changes dd/mm/yyyy to dd/mm/yy, correct it
+  if (year < 2000){
+    if (year >= 80){
+      year += 1900
+    }
+    else{
+      year += 2000
+    }
+  }
 
   return date(year,month,day)
 
@@ -162,7 +171,6 @@ def build_output(data):
       weekly_out[widx] = [entry]
     else:
       weekly_out[widx].append(entry)
-
 
   write_clusters(cluster_out)
   write_weekly(weekly_out)
