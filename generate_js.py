@@ -87,18 +87,18 @@ def format_date(in_date):
 
 def parse_data():
   #open source data and skip header row
-  data_file = csv.reader(open("data/SearchResults.txt","rU"))
+  data_file = csv.reader(open("data/crime_incidents_2014_CSV.csv","rU"))
   head = data_file.next()
   data = []
   for row in data_file:
     #parse relavent fields
-    date_str = row[0]
-    offense = row[2]
-    method = row[3]
-    cluster = row[9]
-    ccn = row[13]
-    xblock = row[14]
-    yblock = row[15]
+    date_str = row[1]
+    offense = row[3]
+    method = row[4]
+    cluster = row[13]
+    ccn = row[0]
+    xblock = row[7]
+    yblock = row[8]
 
     #call methods to convert fields to proper format
     in_date = get_date(date_str)
