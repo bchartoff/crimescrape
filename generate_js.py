@@ -50,7 +50,7 @@ def get_date(date_str):
   day = int(date_list[1])
   year = int(date_list[2])
   #if csv formatting changes dd/mm/yyyy to dd/mm/yy, correct it
-  if (year < 2000){
+  if (year < 1900){
     if (year >= 80){
       year += 1900
     }
