@@ -5,6 +5,11 @@ import xyllmd
 from collections import *
 import csv
 import json
+import re
+from zipfile import ZipFile, BadZipfile
+from os.path import basename, splitext
+from urllib2 import Request, urlopen, HTTPError
+from cStringIO import StringIO
 
 # widx = list(xrange(0,25))
 # cl = list(xrange(1,39))
@@ -30,6 +35,30 @@ offenses = { \
             "SEX ABUSE": {"code": "sa", "js": None, "col_header": "Sex_abuse"}  \
 }
 
+def read_zip(year):
+  url = "http://data.octo.dc.gov/feeds/crime_incidents/archive/crime_incidents_%i_CSV.zip"%year
+
+  filename = re.sub('[^\w\._ ]', '', basename(url))
+  name, extension = splitext(filename)
+
+  request = Request(url)
+  try:
+      response = urlopen(request)
+  except HTTPError:
+      raise
+  data = StringIO(response.read())
+
+  if extension == '.zip':
+      try:
+          zipfile = ZipFile(data)
+      except BadZipFile:
+          raise
+
+      namelist = zipfile.namelist()
+      data = zipfile.read(namelist[0])
+  else:
+      data = data.getvalue()
+  return data
 
 
 def setup():
@@ -50,14 +79,11 @@ def get_date(date_str):
   day = int(date_list[1])
   year = int(date_list[2])
   #if csv formatting changes dd/mm/yyyy to dd/mm/yy, correct it
-  if (year < 1900){
-    if (year >= 80){
+  if (year < 1900):
+    if (year >= 80):
       year += 1900
-    }
-    else{
+    else:
       year += 2000
-    }
-  }
 
   return date(year,month,day)
 
@@ -95,8 +121,29 @@ def format_date(in_date):
 
 
 def parse_data():
-  #open source data and skip header row
-  data_file = csv.reader(open("data/crime_incidents_2014_CSV.csv","rU"))
+  #open csv's for the last two years
+  this_year = read_zip(TODAY.year)
+  last_year = read_zip(TODAY.year-1)
+
+  this_year_reader = csv.reader(StringIO(this_year),delimiter=',')
+  last_year_reader = csv.reader(StringIO(last_year),delimiter=',')
+
+  out_file = open("two_year_data.csv","wb")
+  data_file_writer = csv.writer(out_file)
+
+  #merge the two csvs
+  for row in this_year_reader:
+    data_file_writer.writerow(row)
+  discard = last_year_reader.next()
+  for row in last_year_reader:
+    data_file_writer.writerow(row)
+
+  out_file.close()
+
+  #read from the merged csv
+  data_file = csv.reader(open("two_year_data.csv","rU"))
+
+  #get rid of header row
   head = data_file.next()
   data = []
   for row in data_file:
